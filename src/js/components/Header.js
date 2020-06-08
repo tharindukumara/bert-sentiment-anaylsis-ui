@@ -11,7 +11,7 @@ const Header = ({ align = 'center', details, label, level, size, summary }) => {
       </Heading>
       {summary &&
         ((typeof summary === 'string' && (
-          <Paragraph size="xxlarge" textAlign={textAlign}>
+          <Paragraph size="xlarge" textAlign={textAlign}>
             {summary.toLowerCase()}
           </Paragraph>
         )) ||
