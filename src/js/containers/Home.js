@@ -19,8 +19,7 @@ class Home extends React.Component {
                             <Header
                                 label="Olivia Sentiment Bot"
                                 size=""
-                                summary="build responsive and accessible mobile-first projects for the
-                        web with an easy to use component library"
+                                summary="Sentiment Analysis is the process of determining whether a piece of writing is positive, negative or neutral."
                             />
                             <Controllers />
                         </Box>
