@@ -1,19 +1,30 @@
 import React from 'react';
 
-import { Box, TextArea } from 'grommet';
+import { Box, Button, TextArea, TextInput } from 'grommet';
+
 import { AcceptIcon } from '@fluentui/react-icons-northstar';
 import { Avatar, Chat, Divider, Provider, themes } from '@fluentui/react-northstar'
+import ChatBoxHeader from './ChatBoxHeader';
+import ChatMessageList from './ChatMessageList';
+import ChatMessageForm from './ChatMessageForm';
+
+
+var janeAvatar = {
+  image: 'public/images/avatar/small/ade.jpg',
+  status: {
+    color: 'green',
+    icon: <AcceptIcon />,
+  }
+};
 
 class ChatBox extends React.Component {
-  render() {
-    const janeAvatar = {
-      image: 'public/images/avatar/small/ade.jpg',
-      status: {
-        color: 'green',
-        icon: <AcceptIcon />,
-      },
-    };
-    const items = [
+  constructor(props) {
+    super(props)
+  }
+
+
+  state = {
+    messages: [
       {
         message: (
           <Chat.Message content="Hello" author="John Doe" timestamp="Yesterday, 10:15 PM" mine />
@@ -113,34 +124,44 @@ class ChatBox extends React.Component {
         contentPosition: 'end',
         key: 'message-id-10',
       },
-    ];
+    ]
+  };
+
+  onMessage = ms => {
+    console.log(ms);
 
 
+    let mm = {
+      message: (
+        <Chat.Message content={ms} author="John Doe" timestamp="Today, 11:15 PM" mine />
+      ),
+      contentPosition: 'end',
+      key: 'message-id-10',
+    }
+
+    console.log("onMessage");
+
+    this.setState({ messages: [...this.state.messages, mm] });
+  }
 
 
+  render() {
     return (
       <Box>
         <Box
           key="fadeIn"
           animation={{ type: "fadeIn", duration: 2000 }}
-          height="70vh"
+          height="80vh"
           background="light-1"
           margin="xxsmall"
           gap="small"
           justify="center"
         >
-          <Box overflow={{ horizontal: "hidden", vertical: "auto" }} >
-          <Provider theme={themes.teams}>
-            <Chat items={items} />
-          </Provider>
-        </Box>
-
-        </Box>
-        <Box align="center" pad="xsmall">
-          <TextArea value="Wradasd" resize={false} />
+          <ChatBoxHeader />
+          <ChatMessageList messages={this.state.messages} />
+          <ChatMessageForm onMessage={this.onMessage} />
         </Box>
       </Box>
-      
     )
   }
 }

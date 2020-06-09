@@ -7,7 +7,7 @@ import { Avatar, Chat, Divider, Provider, themes } from '@fluentui/react-northst
 import Header from '../components/Header'
 import Section from '../components/Section';
 import ChatBox from '../components/ChatBox';
-import Controllers from '../components/Controllers';
+import Controllers from '../components/Media';
 
 class Home extends React.Component {
     render() {
