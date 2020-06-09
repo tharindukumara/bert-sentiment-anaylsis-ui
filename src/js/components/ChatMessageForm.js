@@ -9,6 +9,7 @@ class ChatMessageForm extends React.Component {
 
     onMessage = (e) => {
         e.preventDefault();
+
         console.log(this.state.message)
         if (this.state.message === '') return;
         this.props.onMessage(this.state.message);

@@ -127,21 +127,21 @@ class ChatBox extends React.Component {
     ]
   };
 
-  onMessage = ms => {
-    console.log(ms);
+  onMessage(msg) {
+    console.log("on message")
+    this.setState({ messages: [...this.state.messages, this.handleMessage(msg)] });
+  }
 
-
-    let mm = {
+  handleMessage(msg) {
+    let message = {
       message: (
-        <Chat.Message content={ms} author="John Doe" timestamp="Today, 11:15 PM" mine />
+        <Chat.Message content={msg} author="John Doe" timestamp="Today, 11:15 PM" mine />
       ),
       contentPosition: 'end',
       key: 'message-id-10',
     }
 
-    console.log("onMessage");
-
-    this.setState({ messages: [...this.state.messages, mm] });
+    return message;
   }
 
 
