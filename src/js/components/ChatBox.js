@@ -20,6 +20,7 @@ var janeAvatar = {
 class ChatBox extends React.Component {
   constructor(props) {
     super(props)
+
   }
 
 
@@ -127,12 +128,9 @@ class ChatBox extends React.Component {
     ]
   };
 
-  onMessage(msg) {
+  onMessage = msg => {
     console.log("on message")
-    this.setState({ messages: [...this.state.messages, this.handleMessage(msg)] });
-  }
 
-  handleMessage(msg) {
     let message = {
       message: (
         <Chat.Message content={msg} author="John Doe" timestamp="Today, 11:15 PM" mine />
@@ -141,8 +139,9 @@ class ChatBox extends React.Component {
       key: 'message-id-10',
     }
 
-    return message;
+    this.setState({ messages: [...this.state.messages, message] });
   }
+
 
 
   render() {
