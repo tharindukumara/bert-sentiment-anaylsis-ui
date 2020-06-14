@@ -1,25 +1,45 @@
 import React from 'react';
-
-import { Box } from 'grommet';
+import PropTypes from 'prop-types';
 import { Chat } from '@fluentui/react-northstar'
 import ChatMessageWrapper from './ChatMessageWrapper';
 
 
-const ChatMessage = (props) => {
+const ChatMessage = (loading, content, author, contentPosition, attached, key) => {
     return (
         {
             message: (
                 <Chat.Message
                     content={<ChatMessageWrapper 
-                                loading={this.props.loading} 
-                                content={this.props.content} />}
-                    author={this.props.author} />
+                                loading={loading} 
+                                content={content} />
+                            }
+                    author={author} />
             ),
-            contentPosition: 'start',
-            attached: {this.props.attached},
-            key: {props.key}
+            contentPosition: {contentPosition},
+            attached: {attached},
+            key: {key}
         }
     );
 }
+
+
+ChatMessage.propTypes = {
+    loading: PropTypes.bool, 
+    content: PropTypes.object, 
+    author: PropTypes.string, 
+    contentPosition: PropTypes.string,
+    attached: PropTypes.string, 
+    key: PropTypes.string
+  };
+  
+  ChatMessage.defaultProps = {
+    loading: true, 
+    content: undefined, 
+    author: "Olivia", 
+    contentPosition: "start",
+    attached: true, 
+    key: ""
+  };
+  
 
 export default ChatMessage;
