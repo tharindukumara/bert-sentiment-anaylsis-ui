@@ -5,7 +5,7 @@ import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
-import ChatMessage from './ChatMessage';
+import ChatMessageWrapper from './ChatMessageWrapper';
 
 import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
@@ -24,7 +24,7 @@ class ChatBox extends React.Component {
         gutter: <Avatar {...oliviaAvatar} />,
         message: (
           <Chat.Message
-            content={<ChatMessage  loading={false} content="Hello"/>}
+            content={<ChatMessageWrapper loading={true} content="Hello"/>}
             author="Olivia" timestamp="Yesterday, 10:15 PM" />
         ),
         contentPosition: 'start',
@@ -32,13 +32,16 @@ class ChatBox extends React.Component {
       }]
       
     }
+    this.loadInitialMessages();
+    
+  }
 
+  loadInitialMessages = () => {
     setTimeout(() => {
-     
       var ss = {
         message: (
           <Chat.Message
-            content={<ChatMessage  loading={false} content="I am Olivia."/>}
+            content={<ChatMessageWrapper  loading={true} content="I am Olivia."/>}
             author="John Doe"
             timestamp="Yesterday, 10:15 PM" />
         ),
@@ -46,16 +49,12 @@ class ChatBox extends React.Component {
         attached: true,
         key: 'message-id-2',
       };
-
-
       this.setState({ messages: [...this.state.messages,ss] });
-
       setTimeout(() => {
-     
         var sss = {
           message: (
             <Chat.Message
-              content={<ChatMessage  loading={false} content="I can detect sentiments in your messages"/>}
+              content={<ChatMessageWrapper  loading={true} content="I can detect sentiments in your messages"/>}
               author="John Doe"
               timestamp="Yesterday, 10:15 PM" />
           ),
@@ -63,14 +62,11 @@ class ChatBox extends React.Component {
           attached: true,
           key: 'message-id-2',
         };
-  
-  
+
         this.setState({ messages: [...this.state.messages,sss] });
-      }, 1000);
+      }, 1500);
 
-
-
-    }, 1000);
+    }, 1500);
   }
 
 
@@ -80,7 +76,7 @@ class ChatBox extends React.Component {
 
     var message = {
       message: (
-        <Chat.Message content={<ChatMessage loading={false} content={msg}/>} author="John Doe" timestamp="Today, 11:15 PM" mine />
+        <Chat.Message content={<ChatMessageWrapper loading={false} content={msg}/>} author="John Doe" timestamp="Today, 11:15 PM" mine />
       ),
       contentPosition: 'end',
       key: 'message-id-10',
@@ -89,7 +85,7 @@ class ChatBox extends React.Component {
     var sss = {
       message: (
         <Chat.Message
-          content={<ChatMessage loading={true}/>}
+          content={<ChatMessageWrapper loading={true}/>}
           author="Olivia"
           timestamp="Yesterday, 10:15 PM" />
       ),
@@ -176,21 +172,12 @@ class ChatBox extends React.Component {
 
           this.setState({ messages: [...this.state.messages, pos] });
         }
-
-
-      });
-
-   
+      })
   }
 
 
 
   render() {
-    
-
-
-
-
     return (
       <Box>
         <Box
@@ -198,8 +185,8 @@ class ChatBox extends React.Component {
           animation={{ type: "fadeIn", duration: 2000 }}
           height="80vh"
           background="#F3F2F1"
- 
           justify="center"
+          width='large'
         >
           <ChatBoxHeader />
           <ChatMessageList messages={this.state.messages} />

@@ -1,32 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Box } from 'grommet';
-import LoaderSpinner from './LoadSpinner';
+import { Chat } from '@fluentui/react-northstar'
+import ChatMessageWrapper from './ChatMessageWrapper';
 
-class ChatMessage extends React.Component {
-    constructor() {
-        super()
-        this.state = { isLoading: true }
-    }
 
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({isLoading: false})
-        }, 800);
-    }
-
-    render() {
-        if (this.state.isLoading) {
-            return (<LoaderSpinner />);
+const ChatMessage = (props) => {
+    return (
+        {
+            message: (
+                <Chat.Message
+                    content={<ChatMessageWrapper 
+                                loading={this.props.loading} 
+                                content={this.props.content} />}
+                    author={this.props.author} />
+            ),
+            contentPosition: 'start',
+            attached: {this.props.attached},
+            key: {props.key}
         }
-
-
-        return (
-            <Box animation={{ type: "fadeIn", duration: 1000}}>
-                {this.props.content}
-            </Box>
-        );
-    }
+    );
 }
 
 export default ChatMessage;

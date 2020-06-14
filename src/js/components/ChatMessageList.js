@@ -18,9 +18,6 @@ class ChatMessageList extends React.Component {
       }
 
     render() {
-
-        // const { loading } = this.state;
-        var loading = true;
         return (
             <Box overflow={{ horizontal: "hidden", vertical: "auto" }} height={{min:"60vh"}} background="#F3F2F1" >
                 <Provider theme={themes.teams}>

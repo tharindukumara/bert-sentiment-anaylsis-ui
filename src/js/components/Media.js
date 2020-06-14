@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Anchor, Button, Box, Image, Paragraph, Text, TextArea } from 'grommet';
+import { Anchor, Box, Text } from 'grommet';
 import { Github, Slack, Twitter } from 'grommet-icons';
 
 
