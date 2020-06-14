@@ -20,14 +20,12 @@ class ChatMessageList extends React.Component {
     render() {
 
         // const { loading } = this.state;
-        let loading = true;
+        var loading = true;
         return (
             <Box overflow={{ horizontal: "hidden", vertical: "auto" }} height={{min:"60vh"}} background="#F3F2F1" >
                 <Provider theme={themes.teams}>
                     <Chat items={this.props.messages} />
-                    
                 </Provider>
-                
                 <div ref={el => { this.el = el; }} />
             </Box>
         );

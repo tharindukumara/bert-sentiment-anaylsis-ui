@@ -1,14 +1,13 @@
 import React from 'react';
 
 import { Box } from 'grommet';
-
-import { ChatBot } from '@fluentui/react-icons-northstar';
 import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
+import ChatMessage from './ChatMessage';
 
-import { getPositiveFeedback, getNegativeFeedback } from '../lib/ChatAPI'
+import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
 
 var oliviaAvatar = {
@@ -19,67 +18,91 @@ class ChatBox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      loaded: true,
+      chatItem : 0,
+      loading: false,
       messages: [{
         gutter: <Avatar {...oliviaAvatar} />,
         message: (
           <Chat.Message
-            content="Hello"
+            content={<ChatMessage  loading={false} content="Hello"/>}
             author="Olivia" timestamp="Yesterday, 10:15 PM" />
         ),
         contentPosition: 'start',
         key: 'message-id-1',
-      },
-      {
+      }]
+      
+    }
+
+    setTimeout(() => {
+     
+      var ss = {
         message: (
           <Chat.Message
-            content="I am Olivia."
+            content={<ChatMessage  loading={false} content="I am Olivia."/>}
             author="John Doe"
             timestamp="Yesterday, 10:15 PM" />
         ),
         contentPosition: 'start',
         attached: true,
         key: 'message-id-2',
-      },
-      {
-        message: (
-          <Chat.Message
-            content="I can detect the sentiments in the text that you are going to type."
-            author="John Doe"
-            timestamp="Yesterday, 10:15 PM" />
-        ),
-        contentPosition: 'start',
-        attached: true,
-        key: 'message-id-3',
-      },
-      {
-        message: (
-          <Chat.Message
-            content={{
-              content: (
-                <div>
-                  What do you think about <a href="#">www.goodFood.com</a>?
-                </div>
-              ),
-            }}
-            author="John Doe"
-            timestamp="Yesterday, 10:15 PM"
-
-          />
-        ),
-        contentPosition: 'end',
-        attached: 'bottom',
-        key: 'message-id-4',
-      }]
-    }
+      };
 
 
+      this.setState({ messages: [...this.state.messages,ss] });
+
+      setTimeout(() => {
+     
+        var sss = {
+          message: (
+            <Chat.Message
+              content={<ChatMessage  loading={false} content="I can detect sentiments in your messages"/>}
+              author="John Doe"
+              timestamp="Yesterday, 10:15 PM" />
+          ),
+          contentPosition: 'start',
+          attached: true,
+          key: 'message-id-2',
+        };
+  
+  
+        this.setState({ messages: [...this.state.messages,sss] });
+      }, 1000);
+
+
+
+    }, 1000);
   }
 
 
   onMessage = msg => {
     console.log("on message")
     console.log(JSON.stringify({ "sentence": msg }));
+
+    var message = {
+      message: (
+        <Chat.Message content={<ChatMessage loading={false} content={msg}/>} author="John Doe" timestamp="Today, 11:15 PM" mine />
+      ),
+      contentPosition: 'end',
+      key: 'message-id-10',
+    }
+
+    var sss = {
+      message: (
+        <Chat.Message
+          content={<ChatMessage loading={true}/>}
+          author="Olivia"
+          timestamp="Yesterday, 10:15 PM" />
+      ),
+      contentPosition: 'start',
+      attached: true,
+      key: 'message-id-4',
+    }
+    this.setState({ messages: [...this.state.messages, message, sss] });
+
+
+
+    var chartsLoaded = false;
+
     fetch("http://127.0.0.1:5000/sentiment/predict", {
       method: 'POST', // or 'PUT'
       headers: {
@@ -94,21 +117,52 @@ class ChatBox extends React.Component {
         return response.json()
       }).then(data => {
         console.log(data)
-        // let a = { content: JSON.stringify(data) }
         var negative = data.response.negative
         var positive = data.response.positive
 
+        this.state.messages.pop()
+
         if (positive >= negative) {
-          var barChart = <BarChat positive={920} negative={120} />
+          var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
           let pos = {
             message: (
-              <Chat.Message content={barChart} author="Olivia" timestamp="Today, 11:15 PM" />
+              <Chat.Message content={getPositiveFeedback()} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
             ),
             contentPosition: 'start',
             key: 'message-id-10',
           }
-
           this.setState({ messages: [...this.state.messages, pos] });
+          
+          
+          setInterval(() => {
+
+            if (chartsLoaded == false) {
+              let loadCharts = {
+                message: (
+                  <Chat.Message content={"You want see the charts?"} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
+                ),
+                contentPosition: 'start',
+                key: 'message-id-10',
+              }
+              this.setState({ messages: [...this.state.messages, loadCharts] });
+              chartsLoaded = true
+              var loadChartsAnswsrs = "Yes or No"
+              let loadChartsYes = {
+                message: (
+                  <Chat.Message content={loadChartsAnswsrs} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
+                ),
+                contentPosition: 'start',
+                key: 'message-id-10',
+              }
+              this.setState({ messages: [...this.state.messages, loadChartsYes] });
+
+
+
+            }
+          }, 1000);
+          
+
+
 
         } else {
           console.log("negative")
@@ -126,20 +180,17 @@ class ChatBox extends React.Component {
 
       });
 
-    let message = {
-      message: (
-        <Chat.Message content={msg} author="John Doe" timestamp="Today, 11:15 PM" mine />
-      ),
-      contentPosition: 'end',
-      key: 'message-id-10',
-    }
-
-    this.setState({ messages: [...this.state.messages, message] });
+   
   }
 
 
 
   render() {
+    
+
+
+
+
     return (
       <Box>
         <Box
