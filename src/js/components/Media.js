@@ -21,7 +21,7 @@ export default () => (
         <Anchor
             target="_blank"
             a11yTitle="Share feedback on Github"
-            href="https://github.com/grommet/grommet"
+            href="https://github.com/tharindukumara/bert-sentiment-analysis"
             icon={<Github color="brand" size="large" />}
             label={<Text size="large"></Text>}
         />

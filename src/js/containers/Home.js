@@ -1,9 +1,6 @@
 import React from 'react';
 
-import { Anchor, Button, Box, Image, Paragraph, Text, TextArea } from 'grommet';
-import { Github, Slack, Twitter } from 'grommet-icons';
-import { AcceptIcon } from '@fluentui/react-icons-northstar';
-import { Avatar, Chat, Divider, Provider, themes } from '@fluentui/react-northstar'
+import { Box} from 'grommet';
 import Header from '../components/Header'
 import Section from '../components/Section';
 import ChatBox from '../components/ChatBox';
@@ -14,17 +11,21 @@ class Home extends React.Component {
         return (
             <Box>
                 <Section>
-                    <Box direction="row-responsive" justify="center" gap="xlarge">
-                        <Box width="100%" justify="center">
+                    <Box direction="row-responsive" justify="start" gap="xlarge">
+                        <Box width="xlarge" justify="center">
                             <Header
                                 label="Olivia Sentiment Bot"
-                                size=""
-                                summary="Sentiment Analysis is the process of determining whether a piece of writing is positive, negative or neutral."
+                                size="medium"
+                               
+                                summary="Olivia is an AI based real-time sentiment analysis system 
+                                            that identifies the sentiments in your conversations."
                             />
                             <Controllers />
                         </Box>
-                        <Box width="xlarge" background="light-2" pad="small" elevation="medium">
-                            <ChatBox />
+                        <Box width="xlarge"  elevation="medium" align="center">
+                            <Box background="light-2" >
+                                <ChatBox />
+                            </Box>
                         </Box>
                     </Box>
                 </Section>

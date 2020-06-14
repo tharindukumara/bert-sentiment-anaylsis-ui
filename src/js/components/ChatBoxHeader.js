@@ -4,8 +4,8 @@ import { Box, Heading, Markdown, Paragraph } from 'grommet';
 
 const ChatBoxHeader = (props) => {
     return (
-        <Box size="medium">
-            <Heading size="medium">Chat Box Header</Heading>
+        <Box background="brand" height="xsmall" align="center" justify="center">
+           <Heading size="small" level="3">Virtual Assitant</Heading>
         </Box>
     )
 }

@@ -1,10 +1,7 @@
 import React from 'react';
 
-import { Box, Button, TextArea, TextInput } from 'grommet';
-import { Send } from 'grommet-icons';
-import { AcceptIcon } from '@fluentui/react-icons-northstar';
-import { Avatar, Chat, Divider, Provider, themes } from '@fluentui/react-northstar'
-
+import { Box } from 'grommet';
+import { Chat, Provider, themes } from '@fluentui/react-northstar'
 
 class ChatMessageList extends React.Component {
 
@@ -21,11 +18,16 @@ class ChatMessageList extends React.Component {
       }
 
     render() {
+
+        // const { loading } = this.state;
+        let loading = true;
         return (
-            <Box overflow={{ horizontal: "hidden", vertical: "auto" }} >
+            <Box overflow={{ horizontal: "hidden", vertical: "auto" }} height={{min:"60vh"}} background="#F3F2F1" >
                 <Provider theme={themes.teams}>
                     <Chat items={this.props.messages} />
+                    
                 </Provider>
+                
                 <div ref={el => { this.el = el; }} />
             </Box>
         );

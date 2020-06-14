@@ -1,11 +1,13 @@
 import React from 'react';
 import { Box, Button, TextInput } from 'grommet';
 import { Send } from 'grommet-icons';
-import { Avatar, Chat, Divider, Provider, themes } from '@fluentui/react-northstar'
 
 class ChatMessageForm extends React.Component {
-    state = { message: '' };
+    constructor() {
+        super()
 
+        this.state = { message: '' };
+    }
 
     onMessage = (e) => {
         e.preventDefault();
@@ -16,13 +18,21 @@ class ChatMessageForm extends React.Component {
         this.setState({ message: '' });
     }
 
+
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.onMessage(event)
+        }
+    }
+
     render() {
         return (
-            <Box align="center" pad="xsmall" direction="row">
-                <TextInput placeholder="Write a message!!!" 
-                            resize={false} 
-                            value={this.state.message}
-                            onChange={(e) => this.setState({ message: e.target.value })}/>
+            <Box align="center" pad="xsmall" direction="row" background="#F3F2F1">
+                <TextInput placeholder="Write a message!!!"
+                    resize={false}
+                    value={this.state.message}
+                    onChange={(e) => this.setState({ message: e.target.value })} 
+                    onKeyPress={this.handleKeyPress}/>
                 <Box pad="small" direction="row" align="center" gap="small">
                     <Button primary
                         plain={false}
