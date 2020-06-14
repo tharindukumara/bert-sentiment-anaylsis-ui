@@ -1,19 +1,15 @@
 import React from 'react';
 
 import { Box } from 'grommet';
-import { Avatar, Chat } from '@fluentui/react-northstar'
+import { Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
-import ChatMessageWrapper from './ChatMessageWrapper';
 
 import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
 import { createChatMessage } from './ChatMessage';
 
-var oliviaAvatar = {
-  image: "chatbot.png"
-};
 
 class ChatBox extends React.Component {
   constructor(props) {
@@ -50,28 +46,11 @@ class ChatBox extends React.Component {
     console.log("on message")
     console.log(JSON.stringify({ "sentence": msg }));
 
-    var message = {
-      message: (
-        <Chat.Message content={<ChatMessageWrapper loading={false} content={msg} />} author="John Doe" timestamp="Today, 11:15 PM" mine />
-      ),
-      contentPosition: 'end',
-      key: 'message-id-10',
-    }
+    var inputMsg = createChatMessage({ content: msg, loading: false, mine: true, attached:false, contentPosition:"end" });
 
-    var sss = {
-      message: (
-        <Chat.Message
-          content={<ChatMessageWrapper loading={true} />}
-          author="Olivia"
-          timestamp="Yesterday, 10:15 PM" />
-      ),
-      contentPosition: 'start',
-      attached: true,
-      key: 'message-id-4',
-    }
-    this.setState({ messages: [...this.state.messages, message, sss] });
+    var loader =  createChatMessage({ loading: true,  attached:false });
 
-
+    this.setState({ messages: [...this.state.messages, inputMsg, loader] });
 
     var chartsLoaded = false;
 
@@ -95,20 +74,17 @@ class ChatBox extends React.Component {
         this.state.messages.pop()
 
         if (positive >= negative) {
-          var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
-          let pos = {
-            message: (
-              <Chat.Message content={getPositiveFeedback()} author="Olivia" timestamp="Today, 11:15 PM" style={{ width: "100%" }} className="barchart" />
-            ),
-            contentPosition: 'start',
-            key: 'message-id-10',
-          }
-          this.setState({ messages: [...this.state.messages, pos] });
+          
+          var feedback = createChatMessage({content:getPositiveFeedback()})
+          this.setState({ messages: [...this.state.messages, feedback]});
 
 
           setInterval(() => {
 
             if (chartsLoaded == false) {
+
+              var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
+
               let loadCharts = {
                 message: (
                   <Chat.Message content={"You want see the charts?"} author="Olivia" timestamp="Today, 11:15 PM" style={{ width: "100%" }} className="barchart" />

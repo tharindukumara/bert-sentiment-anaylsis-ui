@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Heading, Markdown, Paragraph } from 'grommet';
+import { Box, Heading } from 'grommet';
 
 const ChatBoxHeader = (props) => {
     return (

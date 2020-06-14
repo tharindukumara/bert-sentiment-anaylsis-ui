@@ -3,21 +3,25 @@ import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatMessageWrapper from './ChatMessageWrapper';
 
 export function createChatMessage(props) {
-    var obj =
-    {
-        gutter: <Avatar image={props.avatar != null ? props.avatar : null} />,
+    var chatMsgObj = {
         message: (
             <Chat.Message
                 content={<ChatMessageWrapper
                     loading={props.loading != null ? props.loading : true}
                     content={props.content} />
                 }
-                author={props.author} />
+                author={props.author != null ? props.author : "Olivia"}
+                mine={props.mine ? props.mine : false} />
         ),
-        contentPosition: props.pos != null ? props.pos : "start",
+        contentPosition: props.contentPosition != null ? props.contentPosition : "start",
         attached: props.attached != null ? props.attached : true,
-        key: props.key != null ? props.key : null
+        key: props.key != null ? props.key : null,
+
     };
 
-    return obj;
+    if(props.avatar != null) {
+        chatMsgObj.gutter = <Avatar image={props.avatar} />
+    }
+
+    return chatMsgObj;
 }
