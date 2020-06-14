@@ -156,10 +156,6 @@ class ChatBox extends React.Component {
 
             }
           }, 1000);
-          
-
-
-
         } else {
           console.log("negative")
           let pos = {

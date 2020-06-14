@@ -1,45 +1,51 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Chat } from '@fluentui/react-northstar'
+import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatMessageWrapper from './ChatMessageWrapper';
 
 
-const ChatMessage = (loading, content, author, contentPosition, attached, key) => {
+const ChatMessage = (avatar, loading, content, author, contentPosition, attached, key) => {
     return (
         {
+            gutter: <Avatar {...avatar} />,
             message: (
                 <Chat.Message
-                    content={<ChatMessageWrapper 
-                                loading={loading} 
-                                content={content} />
-                            }
+                    content={<ChatMessageWrapper
+                        loading={loading}
+                        content={content} />
+                    }
                     author={author} />
             ),
-            contentPosition: {contentPosition},
-            attached: {attached},
-            key: {key}
+            contentPosition: { contentPosition },
+            attached: { attached },
+            key: { key }
         }
     );
 }
 
 
 ChatMessage.propTypes = {
-    loading: PropTypes.bool, 
-    content: PropTypes.object, 
-    author: PropTypes.string, 
+    avatar: PropTypes.object,
+    loading: PropTypes.bool,
+    content: PropTypes.object,
+    author: PropTypes.string,
     contentPosition: PropTypes.string,
-    attached: PropTypes.string, 
+    attached: PropTypes.string,
     key: PropTypes.string
-  };
-  
-  ChatMessage.defaultProps = {
-    loading: true, 
-    content: undefined, 
-    author: "Olivia", 
+};
+
+
+ChatMessage.defaultProps = {
+    avatar: {
+        image: "chatbot.png"
+    },
+    loading: true,
+    content: undefined,
+    author: "Olivia",
     contentPosition: "start",
-    attached: true, 
+    attached: true,
     key: ""
-  };
-  
+};
+
 
 export default ChatMessage;

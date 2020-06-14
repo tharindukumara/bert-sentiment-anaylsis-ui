@@ -32,12 +32,14 @@ class ChatMessageForm extends React.Component {
                     resize={false}
                     value={this.state.message}
                     onChange={(e) => this.setState({ message: e.target.value })} 
-                    onKeyPress={this.handleKeyPress}/>
+                    onKeyPress={this.handleKeyPress}
+                    tabIndex="1"/>
                 <Box pad="small" direction="row" align="center" gap="small">
                     <Button primary
                         plain={false}
                         icon={<Send />}
-                        onClick={e => this.onMessage(e)} />
+                        onClick={e => this.onMessage(e)} 
+                        tabIndex="2"/>
                 </Box>
             </Box>
         );
