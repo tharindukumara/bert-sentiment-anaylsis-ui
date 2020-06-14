@@ -9,6 +9,7 @@ import ChatMessageWrapper from './ChatMessageWrapper';
 
 import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
+import { createChatMessage } from './ChatMessage';
 
 var oliviaAvatar = {
   image: "chatbot.png"
@@ -18,54 +19,29 @@ class ChatBox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      chatItem : 0,
+      chatItems: 0,
       loading: false,
-      messages: [{
-        gutter: <Avatar {...oliviaAvatar} />,
-        message: (
-          <Chat.Message
-            content={<ChatMessageWrapper loading={true} content="Hello"/>}
-            author="Olivia" timestamp="Yesterday, 10:15 PM" />
-        ),
-        contentPosition: 'start',
-        key: 'message-id-1',
-      }]
-      
+      messages: [createChatMessage({ content: "Hello", avatar: "chatbot.png", attached: false })]
     }
     this.loadInitialMessages();
-    
+
   }
 
   loadInitialMessages = () => {
     setTimeout(() => {
-      var ss = {
-        message: (
-          <Chat.Message
-            content={<ChatMessageWrapper  loading={true} content="I am Olivia."/>}
-            author="John Doe"
-            timestamp="Yesterday, 10:15 PM" />
-        ),
-        contentPosition: 'start',
-        attached: true,
-        key: 'message-id-2',
-      };
-      this.setState({ messages: [...this.state.messages,ss] });
+      var firstResponse = createChatMessage({ content: "I am Olivia." });
+      this.setState({
+        messages: [...this.state.messages, firstResponse],
+        chatItems: this.state.chatItems + 1
+      });
+
       setTimeout(() => {
-        var sss = {
-          message: (
-            <Chat.Message
-              content={<ChatMessageWrapper  loading={true} content="I can detect sentiments in your messages"/>}
-              author="John Doe"
-              timestamp="Yesterday, 10:15 PM" />
-          ),
-          contentPosition: 'start',
-          attached: true,
-          key: 'message-id-2',
-        };
-
-        this.setState({ messages: [...this.state.messages,sss] });
+        var secondResponse = createChatMessage({ content: "I can detect sentiments in your messages." });
+        this.setState({
+          messages: [...this.state.messages, secondResponse],
+          chatItems: this.state.chatItems + 1
+        });
       }, 1500);
-
     }, 1500);
   }
 
@@ -76,7 +52,7 @@ class ChatBox extends React.Component {
 
     var message = {
       message: (
-        <Chat.Message content={<ChatMessageWrapper loading={false} content={msg}/>} author="John Doe" timestamp="Today, 11:15 PM" mine />
+        <Chat.Message content={<ChatMessageWrapper loading={false} content={msg} />} author="John Doe" timestamp="Today, 11:15 PM" mine />
       ),
       contentPosition: 'end',
       key: 'message-id-10',
@@ -85,7 +61,7 @@ class ChatBox extends React.Component {
     var sss = {
       message: (
         <Chat.Message
-          content={<ChatMessageWrapper loading={true}/>}
+          content={<ChatMessageWrapper loading={true} />}
           author="Olivia"
           timestamp="Yesterday, 10:15 PM" />
       ),
@@ -122,20 +98,20 @@ class ChatBox extends React.Component {
           var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
           let pos = {
             message: (
-              <Chat.Message content={getPositiveFeedback()} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
+              <Chat.Message content={getPositiveFeedback()} author="Olivia" timestamp="Today, 11:15 PM" style={{ width: "100%" }} className="barchart" />
             ),
             contentPosition: 'start',
             key: 'message-id-10',
           }
           this.setState({ messages: [...this.state.messages, pos] });
-          
-          
+
+
           setInterval(() => {
 
             if (chartsLoaded == false) {
               let loadCharts = {
                 message: (
-                  <Chat.Message content={"You want see the charts?"} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
+                  <Chat.Message content={"You want see the charts?"} author="Olivia" timestamp="Today, 11:15 PM" style={{ width: "100%" }} className="barchart" />
                 ),
                 contentPosition: 'start',
                 key: 'message-id-10',
@@ -145,7 +121,7 @@ class ChatBox extends React.Component {
               var loadChartsAnswsrs = "Yes or No"
               let loadChartsYes = {
                 message: (
-                  <Chat.Message content={loadChartsAnswsrs} author="Olivia" timestamp="Today, 11:15 PM" style={{width:"100%"}} className="barchart"/>
+                  <Chat.Message content={loadChartsAnswsrs} author="Olivia" timestamp="Today, 11:15 PM" style={{ width: "100%" }} className="barchart" />
                 ),
                 contentPosition: 'start',
                 key: 'message-id-10',
