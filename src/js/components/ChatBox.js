@@ -1,15 +1,19 @@
 import React from 'react';
 
-import { Box } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
-
+import LoaderSpinner from './LoadSpinner';
 import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
 import { createChatMessage } from './ChatMessage';
+import UserOptions from './UserOptions';
 
+var config = {
+  gutter: "chatbot.png"
+}
 
 class ChatBox extends React.Component {
   constructor(props) {
@@ -17,7 +21,7 @@ class ChatBox extends React.Component {
     this.state = {
       chatItems: 0,
       loading: false,
-      messages: [createChatMessage({ content: "Hello", avatar: "chatbot.png", attached: false })]
+      messages: [createChatMessage({ content: "Hello", avatar: config.gutter, attached: false })]
     }
     this.loadInitialMessages();
 
@@ -46,9 +50,9 @@ class ChatBox extends React.Component {
     console.log("on message")
     console.log(JSON.stringify({ "sentence": msg }));
 
-    var inputMsg = createChatMessage({ content: msg, loading: false, mine: true, attached: false, contentPosition: "end" });
+    var inputMsg = createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" });
 
-    var loader = createChatMessage({ loading: true, attached: false });
+    var loader = createChatMessage({ content: <LoaderSpinner />, attached: false });
 
     this.setState({ messages: [...this.state.messages, inputMsg, loader] });
 
@@ -72,7 +76,7 @@ class ChatBox extends React.Component {
         this.state.messages.pop()
         if (positive >= negative) {
 
-          var feedback = createChatMessage({ content: getPositiveFeedback() })
+          var feedback = createChatMessage({ content: getPositiveFeedback(), avatar: config.gutter, attached: false })
           this.setState({ messages: [...this.state.messages, feedback] });
 
           setTimeout(() => {
@@ -81,13 +85,15 @@ class ChatBox extends React.Component {
               this.setState({ messages: [...this.state.messages, loadCharts] });
 
               setTimeout(() => {
-                var loadChartsYesOrNo = createChatMessage({ content: "Yes or No" })
+                var loadChartsYesOrNo = createChatMessage({ 
+                    content: (<UserOptions />) 
+                  })
                 this.setState({ messages: [...this.state.messages, loadChartsYesOrNo] });
 
 
                 var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
                 chartsLoaded = true
-              });
+              }, 1000);
 
 
             }

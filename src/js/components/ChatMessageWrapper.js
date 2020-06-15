@@ -10,26 +10,21 @@ class ChatMessageWrapper extends React.Component {
     }
 
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({ isLoading: false })
-        }, 800);
-    }
-
-    componentDidUpdate(props) {
-        if (props.changedProp !== this.props.changedProp) {
-            this.setState({
-                changedProp: this.props.changedProp
-            });
+        if(this.props.loader) {
+            setTimeout(() => {
+                this.setState({isLoading: false})
+            }, 800);
         }
+        
     }
 
     render() {
-        if (this.state.isLoading && this.props.loading) {
+        if (this.props.loader && this.state.isLoading) {
             return (<LoaderSpinner />);
         }
 
         return (
-            <Box animation={{ type: "fadeIn", duration: 1000 }}>
+            <Box animation={{ type: "fadeIn", duration: 1000}}>
                 {this.props.content}
             </Box>
         );
