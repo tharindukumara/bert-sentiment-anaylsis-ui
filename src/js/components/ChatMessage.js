@@ -16,7 +16,6 @@ export function createChatMessage(props) {
         contentPosition: props.contentPosition != null ? props.contentPosition : "start",
         attached: props.attached != null ? props.attached : true,
         key: props.key != null ? props.key : null,
-
     };
 
     if(props.avatar != null) {

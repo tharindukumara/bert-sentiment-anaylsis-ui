@@ -11,8 +11,16 @@ class ChatMessageWrapper extends React.Component {
 
     componentDidMount() {
         setTimeout(() => {
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
         }, 800);
+    }
+
+    componentDidUpdate(props) {
+        if (props.changedProp !== this.props.changedProp) {
+            this.setState({
+                changedProp: this.props.changedProp
+            });
+        }
     }
 
     render() {
@@ -21,7 +29,7 @@ class ChatMessageWrapper extends React.Component {
         }
 
         return (
-            <Box animation={{ type: "fadeIn", duration: 1000}}>
+            <Box animation={{ type: "fadeIn", duration: 1000 }}>
                 {this.props.content}
             </Box>
         );
