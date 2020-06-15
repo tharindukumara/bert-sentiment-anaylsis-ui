@@ -11,9 +11,17 @@ import BarChat from './BarChart';
 import { createChatMessage } from './ChatMessage';
 import UserOptions from './UserOptions';
 
-var config = {
-  gutter: "chatbot.png"
+
+var CONFIG = {
+  GUTTER: "chatbot.png",
+  SERVER_IP_ADDR: "http://127.0.0.1:5000"
 }
+
+var APIS = {
+  SENTIMENT_PREDICT: "/sentiment/predict"
+}
+
+
 
 class ChatBox extends React.Component {
   constructor(props) {
@@ -21,7 +29,7 @@ class ChatBox extends React.Component {
     this.state = {
       chatItems: 0,
       loading: false,
-      messages: [createChatMessage({ content: "Hello", avatar: config.gutter, attached: false })]
+      messages: [createChatMessage({ content: "Hello", avatar: CONFIG.GUTTER, attached: false })]
     }
 
     this.postiveValue = 0
@@ -47,7 +55,7 @@ class ChatBox extends React.Component {
     }, 1500);
   }
 
-  updateState =(states) => {
+  updateState = (states) => {
     this.setState({ messages: [...this.state.messages, ...states] });
   }
 
@@ -84,29 +92,29 @@ class ChatBox extends React.Component {
 
   onErrorResponse = () => {
     console.log('error occurred');
-    var feedback = createChatMessage({ content: "Hmmm... Something is wrong.", avatar: config.gutter, attached: false })
+    var feedback = createChatMessage({ content: "Hmmm... Something is wrong.", avatar: CONFIG.GUTTER, attached: false })
     this.setState({ messages: [...this.state.messages, feedback] });
   }
 
-  onData = (data) => {
+  onServerData = (data) => {
     var negativeValue = data.response.negative
     var positiveValue = data.response.positive
     this.state.messages.pop()
 
     var feedbackContent = ""
-    if(positiveValue >= negativeValue) {
+    if (positiveValue >= negativeValue) {
       feedbackContent = getPositiveFeedback()
-      if(Math.abs(positiveValue - negativeValue) <= 1) {
+      if (Math.abs(positiveValue - negativeValue) <= 1) {
         feedbackContent = neutralPositiveFeedback()
       }
     } else {
       feedbackContent = getNegativeFeedback()
-      if(Math.abs(positiveValue - negativeValue) <= 1) {
+      if (Math.abs(positiveValue - negativeValue) <= 1) {
         feedbackContent = neutralNegativeFeedback()
       }
     }
 
-    var feedback = createChatMessage({ content: feedbackContent, avatar: config.gutter, attached: false })
+    var feedback = createChatMessage({ content: feedbackContent, avatar: CONFIG.GUTTER, attached: false })
     this.setState({ messages: [...this.state.messages, feedback] });
 
     this.negativeValue = negativeValue;
@@ -114,9 +122,9 @@ class ChatBox extends React.Component {
     this.onPostResponse();
   }
 
-  onServerCall =(data) => {
-    fetch("http://127.0.0.1:5000/sentiment/predict", {
-      method: 'POST', // or 'PUT'
+  onServerCall = (data) => {
+    fetch(CONFIG.APIS + APIS.SENTIMENT_PREDICT, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -128,16 +136,12 @@ class ChatBox extends React.Component {
         }
         return response.json()
       }).then(data => {
-        this.onData(data);
+        this.onServerData(data);
       })
   }
 
-  onMessage = msg => {
-    console.log("on message")
-    console.log(JSON.stringify({ "sentence": msg }));
-
+  onUserInput = msg => {)
     var inputMsg = createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" });
-
     var loader = createChatMessage({ content: <LoaderSpinner />, attached: false });
 
     this.setState({ messages: [...this.state.messages, inputMsg, loader] });
@@ -160,7 +164,7 @@ class ChatBox extends React.Component {
         >
           <ChatBoxHeader />
           <ChatMessageList messages={this.state.messages} />
-          <ChatMessageForm onMessage={this.onMessage} />
+          <ChatMessageForm onMessage={this.onUserInput} />
         </Box>
       </Box>
     )
