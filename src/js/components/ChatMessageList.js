@@ -14,7 +14,7 @@ class ChatMessageList extends React.Component {
   }
 
   scrollToBottom() {
-    this.endEle.scrollIntoView({ behavior: 'smooth' });
+    this.el.scrollIntoView({ behavior: 'smooth' });
   }
 
   render() {
@@ -23,10 +23,11 @@ class ChatMessageList extends React.Component {
         <Provider theme={themes.teams}>
           <Chat items={this.props.messages} />
         </Provider>
-        <div ref={endEle => { this.endEle = endEle; }} />
+        <div ref={el => { this.el = el; }} />
       </Box>
     );
   };
+
 }
 
 export default ChatMessageList;

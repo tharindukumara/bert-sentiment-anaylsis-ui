@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Button, Text } from 'grommet';
+import { Box } from 'grommet';
 import { Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
@@ -23,8 +23,11 @@ class ChatBox extends React.Component {
       loading: false,
       messages: [createChatMessage({ content: "Hello", avatar: config.gutter, attached: false })]
     }
-    this.loadInitialMessages();
 
+    this.postiveValue = 0
+    this.negativeValue = 0
+
+    this.loadInitialMessages();
   }
 
   loadInitialMessages = () => {
@@ -32,7 +35,6 @@ class ChatBox extends React.Component {
       var firstResponse = createChatMessage({ content: "I am Olivia." });
       this.setState({
         messages: [...this.state.messages, firstResponse],
-        chatItems: this.state.chatItems + 1
       });
 
       setTimeout(() => {
@@ -45,6 +47,90 @@ class ChatBox extends React.Component {
     }, 1500);
   }
 
+  updateState =(states) => {
+    this.setState({ messages: [...this.state.messages, ...states] });
+  }
+
+  onClickNo = () => {
+    this.state.messages.pop()
+    var tryAgain = createChatMessage({ content: "Ok. Wanna try again?", loader: false, mine: true, attached: false, contentPosition: "end" });
+    this.setState({ messages: [...this.state.messages, tryAgain] });
+  }
+
+  onClickYes = () => {
+    this.state.messages.pop()
+    var barChart = <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
+    var barChartMsg = createChatMessage({ content: barChart });
+
+    this.setState({ messages: [...this.state.messages, barChartMsg] });
+
+    this.postiveValue = 0
+    this.negativeValue = 0
+  }
+
+  onPostResponse = () => {
+    setTimeout(() => {
+      var loadCharts = createChatMessage({ content: "You want see the charts?" })
+      this.setState({ messages: [...this.state.messages, loadCharts] });
+
+      setTimeout(() => {
+        var loadChartsYesOrNo = createChatMessage({
+          content: (<UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />)
+        })
+        this.setState({ messages: [...this.state.messages, loadChartsYesOrNo] });
+      }, 1000);
+    }, 1000);
+  }
+
+  onErrorResponse = () => {
+    console.log('error occurred');
+    var feedback = createChatMessage({ content: "Hmmm... Something is wrong.", avatar: config.gutter, attached: false })
+    this.setState({ messages: [...this.state.messages, feedback] });
+  }
+
+  onData = (data) => {
+    var negativeValue = data.response.negative
+    var positiveValue = data.response.positive
+    this.state.messages.pop()
+
+    var feedbackContent = ""
+    if(positiveValue >= negativeValue) {
+      feedbackContent = getPositiveFeedback()
+      if(Math.abs(positiveValue - negativeValue) <= 1) {
+        feedbackContent = neutralPositiveFeedback()
+      }
+    } else {
+      feedbackContent = getNegativeFeedback()
+      if(Math.abs(positiveValue - negativeValue) <= 1) {
+        feedbackContent = neutralNegativeFeedback()
+      }
+    }
+
+    var feedback = createChatMessage({ content: feedbackContent, avatar: config.gutter, attached: false })
+    this.setState({ messages: [...this.state.messages, feedback] });
+
+    this.negativeValue = negativeValue;
+    this.positiveValue = positiveValue;
+    this.onPostResponse();
+  }
+
+  onServerCall =(data) => {
+    fetch("http://127.0.0.1:5000/sentiment/predict", {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "sentence": data })
+    })
+      .then(response => {
+        if (!response.ok) {
+          this.onErrorResponse();
+        }
+        return response.json()
+      }).then(data => {
+        this.onData(data);
+      })
+  }
 
   onMessage = msg => {
     console.log("on message")
@@ -56,61 +142,7 @@ class ChatBox extends React.Component {
 
     this.setState({ messages: [...this.state.messages, inputMsg, loader] });
 
-    var chartsLoaded = false;
-
-    fetch("http://127.0.0.1:5000/sentiment/predict", {
-      method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ "sentence": msg })
-    })
-      .then(response => {
-        if (!response.ok) {
-          console.log('error occurred');
-        }
-        return response.json()
-      }).then(data => {
-        var negative = data.response.negative
-        var positive = data.response.positive
-        this.state.messages.pop()
-        if (positive >= negative) {
-
-          var feedback = createChatMessage({ content: getPositiveFeedback(), avatar: config.gutter, attached: false })
-          this.setState({ messages: [...this.state.messages, feedback] });
-
-          setTimeout(() => {
-            if (chartsLoaded == false) {
-              var loadCharts = createChatMessage({ content: "You want see the charts?" })
-              this.setState({ messages: [...this.state.messages, loadCharts] });
-
-              setTimeout(() => {
-                var loadChartsYesOrNo = createChatMessage({ 
-                    content: (<UserOptions />) 
-                  })
-                this.setState({ messages: [...this.state.messages, loadChartsYesOrNo] });
-
-
-                var barChart = <BarChat positive={positive * 1000} negative={negative * 1000} />
-                chartsLoaded = true
-              }, 1000);
-
-
-            }
-          }, 1000);
-        } else {
-          console.log("negative")
-          let pos = {
-            message: (
-              <Chat.Message content={getNegativeFeedback()} author="Olivia" timestamp="Today, 11:15 PM" />
-            ),
-            contentPosition: 'end',
-            key: 'message-id-10',
-          }
-
-          this.setState({ messages: [...this.state.messages, pos] });
-        }
-      })
+    this.onServerCall(msg);
   }
 
 
