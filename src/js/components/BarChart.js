@@ -60,7 +60,7 @@ class BarChat extends React.Component {
 
     render() {
         return (
-            <Box width="200%">
+            <Box width="100%">
                 <Text>This is how the values!!!</Text>
                 <ReactApexChart options={this.state.options} series={this.state.series} type="bar" height={130} />
             </Box>

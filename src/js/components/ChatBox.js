@@ -49,30 +49,27 @@ class ChatBox extends React.Component {
     await createChatMessage({ content: "I am Olivia.", delay: true })
       .then(data => {
         this.updateState([data])
-      })
+      });
 
-      ;
     await createChatMessage({ content: "I can detect sentiments in your messages.", delay: true })
       .then((data) => {
         this.updateState([data])
       });
   }
 
+
   onClickNo = async () => {
     this.state.messages.pop();
-
 
     await createChatMessage({ content: "No", loader: false, mine: true, attached: false, contentPosition: "end" })
       .then((data) => {
         this.updateState([data])
       });
 
-    await createChatMessage({
-      content: "Ok. Wanna try again?"
-      , loader: false, mine: true, attached: false, contentPosition: "end"
-    }).then((data) => {
-      this.updateState([data]);
-    });
+    await createChatMessage({ content: "Ok. Wanna try again?", avatar: CONFIG.GUTTER, attached: false, contentPosition: "start" })
+      .then((data) => {
+        this.updateState([data]);
+      });
   }
 
   onClickYes = async () => {
@@ -84,7 +81,7 @@ class ChatBox extends React.Component {
       });
 
 
-    var barChart = <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
+    var barChart = (<BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />)
     createChatMessage({ content: barChart, avatar: CONFIG.GUTTER, attached: false })
       .then((data) => {
         this.updateState([data])
@@ -96,7 +93,7 @@ class ChatBox extends React.Component {
 
 
   onPostResponse = async () => {
-    var content = (<Box gap="small">
+    var content = (<Box gap="small" direction="column">
       <Text>You want see the charts?</Text>
       <UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />
     </Box>)
@@ -110,13 +107,12 @@ class ChatBox extends React.Component {
   onErrorResponse = async () => {
     console.log('error occurred');
     this.state.messages.pop()
-    createChatMessage({
-      content: "Hmmm... Something is wrong."
-      , avatar: CONFIG.GUTTER, attached: false
-    }).then((data) => {
-      this.updateState([data])
-    });
+    createChatMessage({  content: "Hmmm... Something is wrong." , avatar: CONFIG.GUTTER, attached: false })
+      .then((data) => {
+        this.updateState([data])
+      });
   }
+
 
   onServerData = async (data) => {
     var negativeValue = data.response.negative
@@ -140,12 +136,9 @@ class ChatBox extends React.Component {
 
     const sentPredRes = await fetch(CONFIG.SERVER_IP_ADDR + APIS.SENTIMENT_PREDICT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ "sentence": data })
-    })
-      .then(res => {
+    }).then(res => {
         if (!res.ok) {
           Promise.reject(res);
           this.onErrorResponse();
@@ -158,6 +151,7 @@ class ChatBox extends React.Component {
       this.onPostResponse();
     });
   }
+
 
   onUserInput = async (msg) => {
     await createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" })
