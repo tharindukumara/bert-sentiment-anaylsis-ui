@@ -13,7 +13,7 @@ var negativeFeedback = ["That is a negative sentiment", "Bad mood?. A negative s
 
 
 var neutralPositiveFeedback = ["Close call. I feel this is a positive sentiment. But I can be wrong."
-    ,"Hmmmmmm... It is a positve sentiment. Isn't it?"
+    , "Hmmmmmm... It is a positve sentiment. Isn't it?"
     , "I am clueless. Seems a positive sentiment to me."
     , "Sorry. This is out of my knowledge. Seems a positive sentiment."]
 
@@ -41,4 +41,19 @@ export function getNeutralPositiveFeedback() {
 
 export function getNeutralNegativeFeedback() {
     return neutralNegativeFeedback[Math.floor(Math.random() * neutralNegativeFeedback.length)];
+}
+
+export function getFeedbackFromScores(positiveValue, negativeValue) {
+    if (positiveValue >= negativeValue) {
+        if (Math.abs(positiveValue - negativeValue) < 1.5) {
+            return getNeutralPositiveFeedback();
+        }
+        return getPositiveFeedback();
+    } 
+    
+    if (Math.abs(positiveValue - negativeValue) <  1.5) {
+        return getNeutralNegativeFeedback();
+    }
+
+    return  getNegativeFeedback();
 }

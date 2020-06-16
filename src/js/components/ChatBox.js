@@ -1,22 +1,21 @@
 import React from 'react';
 
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
 import LoaderSpinner from './LoadSpinner';
-import { getPositiveFeedback, getNegativeFeedback, getNeutralPositiveFeedback, getNeutralNegativeFeedback } from '../lib/ChatAPI'
+import { getFeedbackFromScores } from '../lib/ChatAPI'
 import BarChat from './BarChart';
 import { createChatMessage } from './ChatMessage';
 import UserOptions from './UserOptions';
 
-
-const CONFIG = {
+var CONFIG = {
   GUTTER: "chatbot.png",
   SERVER_IP_ADDR: "http://127.0.0.1:5000"
 }
 
-const APIS = {
+var APIS = {
   SENTIMENT_PREDICT: "/sentiment/predict"
 }
 
@@ -42,7 +41,7 @@ class ChatBox extends React.Component {
 
 
   loadInitialMessages = async () => {
-    await createChatMessage({ content: "Hello", avatar: CONFIG.GUTTER, attached: false })
+    createChatMessage({ content: "Hello", avatar: CONFIG.GUTTER, attached: false })
       .then(data => {
         this.updateState([data])
       })
@@ -62,108 +61,118 @@ class ChatBox extends React.Component {
   onClickNo = async () => {
     this.state.messages.pop();
 
+
+    await createChatMessage({ content: "No", loader: false, mine: true, attached: false, contentPosition: "end" })
+      .then((data) => {
+        this.updateState([data])
+      });
+
     await createChatMessage({
       content: "Ok. Wanna try again?"
       , loader: false, mine: true, attached: false, contentPosition: "end"
     }).then((data) => {
-      this.updateState(data);
+      this.updateState([data]);
     });
   }
 
-  onClickYes = () => {
+  onClickYes = async () => {
     this.state.messages.pop()
+
+    await createChatMessage({ content: "Yes", loader: false, mine: true, attached: false, contentPosition: "end" })
+      .then((data) => {
+        this.updateState([data])
+      });
+
+
     var barChart = <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
-    createChatMessage({ content: barChart }).then((data) => {
-      this.updateState([data])
-    });
+    createChatMessage({ content: barChart, avatar: CONFIG.GUTTER, attached: false })
+      .then((data) => {
+        this.updateState([data])
+      });
 
     this.postiveValue = 0
     this.negativeValue = 0
   }
 
+
   onPostResponse = async () => {
-    await createChatMessage({ content: "You want see the charts?" }).then((data) => {
-      this.updateState([data])
-    });
-
-    await createChatMessage({
-      content: (<UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />)
-    }).then((data) => {
-      this.updateState([data])
-    });
-  }
-
-  onErrorResponse = async () => {
-    console.log('error occurred');
-    await createChatMessage({
-      content: "Hmmm... Something is wrong."
-      , avatar: CONFIG.GUTTER, attached: false
-    })
+    var content = (<Box gap="small">
+      <Text>You want see the charts?</Text>
+      <UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />
+    </Box>)
+    await createChatMessage({ content: content })
       .then((data) => {
         this.updateState([data])
       });
   }
 
+
+  onErrorResponse = async () => {
+    console.log('error occurred');
+    this.state.messages.pop()
+    createChatMessage({
+      content: "Hmmm... Something is wrong."
+      , avatar: CONFIG.GUTTER, attached: false
+    }).then((data) => {
+      this.updateState([data])
+    });
+  }
+
   onServerData = async (data) => {
     var negativeValue = data.response.negative
     var positiveValue = data.response.positive
+
     this.state.messages.pop()
 
-    var feedbackContent = ""
-    if (positiveValue >= negativeValue) {
-      feedbackContent = getPositiveFeedback()
-      if (Math.abs(positiveValue - negativeValue) <= 1) {
-        feedbackContent = getNeutralPositiveFeedback()
-      }
-    } else {
-      feedbackContent = getNegativeFeedback()
-      if (Math.abs(positiveValue - negativeValue) <= 1) {
-        feedbackContent = getNeutralNegativeFeedback()
-      }
-    }
-
+    var feedbackContent = getFeedbackFromScores(positiveValue, negativeValue);
     await createChatMessage({ content: feedbackContent, avatar: CONFIG.GUTTER, attached: false })
       .then((data) => {
-      this.updateState([data])
-    });
-
+        this.updateState([data])
+      });
 
     this.negativeValue = negativeValue;
     this.positiveValue = positiveValue;
-    this.onPostResponse();
   }
 
+
   onServerCall = async (data) => {
-    fetch(CONFIG.APIS + APIS.SENTIMENT_PREDICT, {
+    console.log(CONFIG.SERVER_IP_ADDR + APIS.SENTIMENT_PREDICT)
+
+    const sentPredRes = await fetch(CONFIG.SERVER_IP_ADDR + APIS.SENTIMENT_PREDICT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ "sentence": data })
     })
-      .then(response => {
-        if (!response.ok) {
+      .then(res => {
+        if (!res.ok) {
+          Promise.reject(res);
           this.onErrorResponse();
         }
-        return response.json()
-      }).then(data => {
-        this.onServerData(data);
+        return res;
       })
+      .then(res => res.json());
+
+    await this.onServerData(sentPredRes).then(() => {
+      this.onPostResponse();
+    });
   }
 
   onUserInput = async (msg) => {
-    await createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" }).then((data) => {
-      this.updateState([data])
-    });
+    await createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" })
+      .then((data) => {
+        this.updateState([data])
+      });
 
 
-    await createChatMessage({ content: <LoaderSpinner />, attached: false }).then((data) => {
-      this.updateState([data])
-    });
+    await createChatMessage({ content: <LoaderSpinner />, attached: false })
+      .then((data) => {
+        this.updateState([data])
+      });
 
-    this.onServerCall(msg);
+    await this.onServerCall(msg);
   }
-
 
 
   render() {
