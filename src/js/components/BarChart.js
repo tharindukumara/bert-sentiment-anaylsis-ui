@@ -11,6 +11,9 @@ class BarChat extends React.Component {
             series: [{
                 data: [this.props.positive, this.props.negative]
             }],
+            dataLabels: {
+                enabled: false,
+            },
             options: {
                 chart: {
                     type: 'bar',
@@ -19,7 +22,6 @@ class BarChat extends React.Component {
                         show: false
                       },
                 },
-                
                 labels: {
                     show: false
                 },
@@ -28,15 +30,24 @@ class BarChat extends React.Component {
                         horizontal: true,
                     }
                 },
+                dataLabels: {
+                    enabled: false
+                  },
                 xaxis: {
                     categories: ['Positive', 'Negative'],
                     show: false,
                     visible: false,
+                    labels: {
+                        show: false,
+                    },
                     axisTicks: {
                         show: false
                     },
                     axisBorder: {
                         show: false,
+                    },
+                    crosshairs: {
+                        show: false
                     }
                 },
                 yaxis: {
