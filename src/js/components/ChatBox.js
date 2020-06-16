@@ -6,21 +6,20 @@ import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
 import LoaderSpinner from './LoadSpinner';
-import { getPositiveFeedback, getNegativeFeedback, neutralPositiveFeedback, neutralNegativeFeedback } from '../lib/ChatAPI'
+import { getPositiveFeedback, getNegativeFeedback, getNeutralPositiveFeedback, getNeutralNegativeFeedback } from '../lib/ChatAPI'
 import BarChat from './BarChart';
 import { createChatMessage } from './ChatMessage';
 import UserOptions from './UserOptions';
 
 
-var CONFIG = {
+const CONFIG = {
   GUTTER: "chatbot.png",
   SERVER_IP_ADDR: "http://127.0.0.1:5000"
 }
 
-var APIS = {
+const APIS = {
   SENTIMENT_PREDICT: "/sentiment/predict"
 }
-
 
 
 class ChatBox extends React.Component {
@@ -29,7 +28,7 @@ class ChatBox extends React.Component {
     this.state = {
       chatItems: 0,
       loading: false,
-      messages: [createChatMessage({ content: "Hello", avatar: CONFIG.GUTTER, attached: false })]
+      messages: []
     }
 
     this.postiveValue = 0
@@ -38,25 +37,27 @@ class ChatBox extends React.Component {
     this.loadInitialMessages();
   }
 
-  loadInitialMessages = () => {
-    setTimeout(() => {
-      var firstResponse = createChatMessage({ content: "I am Olivia." });
-      this.setState({
-        messages: [...this.state.messages, firstResponse],
-      });
-
-      setTimeout(() => {
-        var secondResponse = createChatMessage({ content: "I can detect sentiments in your messages." });
-        this.setState({
-          messages: [...this.state.messages, secondResponse],
-          chatItems: this.state.chatItems + 1
-        });
-      }, 1500);
-    }, 1500);
-  }
-
   updateState = (states) => {
     this.setState({ messages: [...this.state.messages, ...states] });
+  }
+
+
+  loadInitialMessages = async () => {
+    await createChatMessage({ content: "Hello", avatar: CONFIG.GUTTER, attached: false })
+      .then(data => {
+        this.updateState([data])
+      })
+
+    await createChatMessage({ content: "I am Olivia.", delay: true})
+      .then(data => {
+        this.updateState([data])
+      })
+
+      ;
+    await createChatMessage({ content: "I can detect sentiments in your messages." , delay: true})
+      .then((data) => {
+        this.updateState([data])
+      });
   }
 
   onClickNo = () => {
@@ -105,12 +106,12 @@ class ChatBox extends React.Component {
     if (positiveValue >= negativeValue) {
       feedbackContent = getPositiveFeedback()
       if (Math.abs(positiveValue - negativeValue) <= 1) {
-        feedbackContent = neutralPositiveFeedback()
+        feedbackContent = getNeutralPositiveFeedback()
       }
     } else {
       feedbackContent = getNegativeFeedback()
       if (Math.abs(positiveValue - negativeValue) <= 1) {
-        feedbackContent = neutralNegativeFeedback()
+        feedbackContent = getNeutralNegativeFeedback()
       }
     }
 
@@ -140,7 +141,7 @@ class ChatBox extends React.Component {
       })
   }
 
-  onUserInput = msg => {)
+  onUserInput = msg => {
     var inputMsg = createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" });
     var loader = createChatMessage({ content: <LoaderSpinner />, attached: false });
 

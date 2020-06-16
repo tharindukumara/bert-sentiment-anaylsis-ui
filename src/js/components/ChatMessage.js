@@ -2,9 +2,16 @@ import React from 'react';
 import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatMessageWrapper from './ChatMessageWrapper';
 
+var delay = async (timeout) => {
+    await new Promise(r => setTimeout(r, timeout));
+}
 
+export async function createChatMessage(props) {
+    if (props.delay) {
+        var timeout = props.timeout != null ? props.timeout : 1000
+        await delay(timeout);
+    }
 
-export function createChatMessage(props) {
     var chatMsgObj = {
         message: (
             <Chat.Message
@@ -21,7 +28,7 @@ export function createChatMessage(props) {
         key: props.key != null ? props.key : null,
     };
 
-    if(props.avatar != null) {
+    if (props.avatar != null) {
         chatMsgObj.gutter = <Avatar image={props.avatar} />
     }
 
