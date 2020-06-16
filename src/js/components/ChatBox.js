@@ -66,7 +66,7 @@ class ChatBox extends React.Component {
         this.updateState([data])
       });
 
-    await createChatMessage({ content: "Ok. Wanna try again?", avatar: CONFIG.GUTTER, attached: false, contentPosition: "start" })
+    await createChatMessage({ content: "Ok. Wanna try again? Type a message again.", avatar: CONFIG.GUTTER, attached: false, contentPosition: "start" })
       .then((data) => {
         this.updateState([data]);
       });
@@ -81,8 +81,11 @@ class ChatBox extends React.Component {
       });
 
 
-    var barChart = (<BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />)
-    createChatMessage({ content: barChart, avatar: CONFIG.GUTTER, attached: false })
+    var barChart = (<Box>
+                      <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
+                      <Text>Wanna try again?<br />Type a message again.</Text>
+                    </Box>)
+    await createChatMessage({ content: barChart, avatar: CONFIG.GUTTER, attached: false })
       .then((data) => {
         this.updateState([data])
       });

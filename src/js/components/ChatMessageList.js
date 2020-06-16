@@ -15,6 +15,10 @@ class ChatMessageList extends React.Component {
 
   scrollToBottom() {
     this.el.scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(function(){
+      this.el.scrollIntoView({ behavior: 'smooth' });
+    }.bind(this), 1000);
   }
 
   render() {
