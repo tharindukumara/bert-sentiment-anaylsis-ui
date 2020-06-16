@@ -2,13 +2,13 @@ import React from 'react';
 import { Avatar, Chat } from '@fluentui/react-northstar'
 import ChatMessageWrapper from './ChatMessageWrapper';
 
-var delay = async (timeout) => {
+export async function delay(timeout) {
     await new Promise(r => setTimeout(r, timeout));
 }
 
 export async function createChatMessage(props) {
     if (props.delay) {
-        var timeout = props.timeout != null ? props.timeout : 1000
+        var timeout = props.timeout != null ? props.timeout : 1000;
         await delay(timeout);
     }
 
