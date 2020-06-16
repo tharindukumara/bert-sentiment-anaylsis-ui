@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Box } from 'grommet';
-import { Chat } from '@fluentui/react-northstar'
 import ChatBoxHeader from './ChatBoxHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatMessageForm from './ChatMessageForm';
@@ -48,56 +47,64 @@ class ChatBox extends React.Component {
         this.updateState([data])
       })
 
-    await createChatMessage({ content: "I am Olivia.", delay: true})
+    await createChatMessage({ content: "I am Olivia.", delay: true })
       .then(data => {
         this.updateState([data])
       })
 
       ;
-    await createChatMessage({ content: "I can detect sentiments in your messages." , delay: true})
+    await createChatMessage({ content: "I can detect sentiments in your messages.", delay: true })
       .then((data) => {
         this.updateState([data])
       });
   }
 
-  onClickNo = () => {
-    this.state.messages.pop()
-    var tryAgain = createChatMessage({ content: "Ok. Wanna try again?", loader: false, mine: true, attached: false, contentPosition: "end" });
-    this.setState({ messages: [...this.state.messages, tryAgain] });
+  onClickNo = async () => {
+    this.state.messages.pop();
+
+    await createChatMessage({
+      content: "Ok. Wanna try again?"
+      , loader: false, mine: true, attached: false, contentPosition: "end"
+    }).then((data) => {
+      this.updateState(data);
+    });
   }
 
   onClickYes = () => {
     this.state.messages.pop()
     var barChart = <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
-    var barChartMsg = createChatMessage({ content: barChart });
-
-    this.setState({ messages: [...this.state.messages, barChartMsg] });
+    createChatMessage({ content: barChart }).then((data) => {
+      this.updateState([data])
+    });
 
     this.postiveValue = 0
     this.negativeValue = 0
   }
 
-  onPostResponse = () => {
-    setTimeout(() => {
-      var loadCharts = createChatMessage({ content: "You want see the charts?" })
-      this.setState({ messages: [...this.state.messages, loadCharts] });
+  onPostResponse = async () => {
+    await createChatMessage({ content: "You want see the charts?" }).then((data) => {
+      this.updateState([data])
+    });
 
-      setTimeout(() => {
-        var loadChartsYesOrNo = createChatMessage({
-          content: (<UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />)
-        })
-        this.setState({ messages: [...this.state.messages, loadChartsYesOrNo] });
-      }, 1000);
-    }, 1000);
+    await createChatMessage({
+      content: (<UserOptions onClickYes={this.onClickYes} onClickNo={this.onClickNo} />)
+    }).then((data) => {
+      this.updateState([data])
+    });
   }
 
-  onErrorResponse = () => {
+  onErrorResponse = async () => {
     console.log('error occurred');
-    var feedback = createChatMessage({ content: "Hmmm... Something is wrong.", avatar: CONFIG.GUTTER, attached: false })
-    this.setState({ messages: [...this.state.messages, feedback] });
+    await createChatMessage({
+      content: "Hmmm... Something is wrong."
+      , avatar: CONFIG.GUTTER, attached: false
+    })
+      .then((data) => {
+        this.updateState([data])
+      });
   }
 
-  onServerData = (data) => {
+  onServerData = async (data) => {
     var negativeValue = data.response.negative
     var positiveValue = data.response.positive
     this.state.messages.pop()
@@ -115,15 +122,18 @@ class ChatBox extends React.Component {
       }
     }
 
-    var feedback = createChatMessage({ content: feedbackContent, avatar: CONFIG.GUTTER, attached: false })
-    this.setState({ messages: [...this.state.messages, feedback] });
+    await createChatMessage({ content: feedbackContent, avatar: CONFIG.GUTTER, attached: false })
+      .then((data) => {
+      this.updateState([data])
+    });
+
 
     this.negativeValue = negativeValue;
     this.positiveValue = positiveValue;
     this.onPostResponse();
   }
 
-  onServerCall = (data) => {
+  onServerCall = async (data) => {
     fetch(CONFIG.APIS + APIS.SENTIMENT_PREDICT, {
       method: 'POST',
       headers: {
@@ -141,11 +151,15 @@ class ChatBox extends React.Component {
       })
   }
 
-  onUserInput = msg => {
-    var inputMsg = createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" });
-    var loader = createChatMessage({ content: <LoaderSpinner />, attached: false });
+  onUserInput = async (msg) => {
+    await createChatMessage({ content: msg, loader: false, mine: true, attached: false, contentPosition: "end" }).then((data) => {
+      this.updateState([data])
+    });
 
-    this.setState({ messages: [...this.state.messages, inputMsg, loader] });
+
+    await createChatMessage({ content: <LoaderSpinner />, attached: false }).then((data) => {
+      this.updateState([data])
+    });
 
     this.onServerCall(msg);
   }
