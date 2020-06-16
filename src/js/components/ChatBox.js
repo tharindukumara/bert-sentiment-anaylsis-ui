@@ -29,7 +29,7 @@ class ChatBox extends React.Component {
       messages: []
     }
 
-    this.postiveValue = 0
+    this.positiveValue = 0
     this.negativeValue = 0
 
     this.loadInitialMessages();
@@ -80,9 +80,10 @@ class ChatBox extends React.Component {
         this.updateState([data])
       });
 
-
+      console.log(this.positiveValue);
+      console.log(this.negativeValue);
     var barChart = (<Box>
-                      <BarChat positive={this.postiveValue * 1000} negative={this.negativeValue * 1000} />
+                      <BarChat positive={this.positiveValue * 1000} negative={this.negativeValue * 1000} />
                       <Text>Wanna try again?<br />Type a message again.</Text>
                     </Box>)
     await createChatMessage({ content: barChart, avatar: CONFIG.GUTTER, attached: false })
@@ -118,8 +119,11 @@ class ChatBox extends React.Component {
 
 
   onServerData = async (data) => {
-    var negativeValue = data.response.negative
-    var positiveValue = data.response.positive
+    var positiveValue = parseFloat(data.response.positive)
+    var negativeValue = parseFloat(data.response.negative)
+    console.log(positiveValue)
+    this.positiveValue = positiveValue;
+    this.negativeValue = negativeValue;
 
     this.state.messages.pop()
 
@@ -128,9 +132,6 @@ class ChatBox extends React.Component {
       .then((data) => {
         this.updateState([data])
       });
-
-    this.negativeValue = negativeValue;
-    this.positiveValue = positiveValue;
   }
 
 
