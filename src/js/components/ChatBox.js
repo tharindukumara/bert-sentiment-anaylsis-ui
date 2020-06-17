@@ -46,7 +46,7 @@ class ChatBox extends React.Component {
         this.updateState([data])
       })
 
-    await createChatMessage({ content: "I am Olivia.", delay: true })
+    await createChatMessage({ content: "I am Zonik.", delay: true })
       .then(data => {
         this.updateState([data])
       });

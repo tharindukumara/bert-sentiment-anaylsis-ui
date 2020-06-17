@@ -14,10 +14,9 @@ class Home extends React.Component {
                     <Box direction="row-responsive" justify="start" gap="xlarge">
                         <Box width="xlarge" justify="center">
                             <Header
-                                label="Olivia Sentiment Bot"
+                                label="Olie - Sentiment Bot"
                                 size="medium"
-                               
-                                summary="Olivia is an AI based real-time sentiment analysis system 
+                                summary="An open-source AI based real-time chatbot  
                                             that identifies the sentiments in your conversations."
                             />
                             <Controllers />

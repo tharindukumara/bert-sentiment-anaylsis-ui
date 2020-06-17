@@ -17,7 +17,7 @@ class BarChat extends React.Component {
             options: {
                 chart: {
                     type: 'bar',
-                    height: 130,
+                    height: 100,
                     toolbar: {
                         show: false
                       },

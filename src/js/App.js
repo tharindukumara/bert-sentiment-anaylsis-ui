@@ -7,14 +7,16 @@ class App extends React.Component {
   render() {
     return (
       <div>
-         <Grommet theme='grommet'>
+        
           <Router>
             <Switch>
+            <Grommet theme='grommet'>
               <Route path="/" exact component={Home} />
               <Route path="/:url" component={Home} />
+              </Grommet>
             </Switch>
           </Router>
-        </Grommet>
+       
         
       </div>
     )
