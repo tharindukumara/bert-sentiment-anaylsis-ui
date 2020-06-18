@@ -20,7 +20,7 @@ export async function createChatMessage(props) {
                         loader={props.loader != null ? props.loader : true}
                         content={props.content} />
                 }
-                author={props.author != null ? props.author : "Zonik"}
+                author={props.author != null ? props.author : "Olie"}
                 mine={props.mine ? props.mine : false} />
         ),
         contentPosition: props.contentPosition != null ? props.contentPosition : "start",
