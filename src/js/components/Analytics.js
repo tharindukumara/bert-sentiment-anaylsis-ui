@@ -3,7 +3,7 @@ import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 
 const config = {
-    trackerId: 'UA-99690204-1',
+    trackerId: 'UA-169914402-1',
     debug: false,
 };
 

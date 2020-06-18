@@ -2,9 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './js/App';
 import * as serviceWorker from './serviceWorker';
+import Analytics from './js/components/Analytics';
 
 ReactDOM.render(
-    <App />,
+  <Analytics>
+    <App />
+  </Analytics>
+    ,
   document.getElementById('root')
 )
 
