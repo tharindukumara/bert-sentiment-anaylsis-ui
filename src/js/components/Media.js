@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Anchor, Box, Text } from 'grommet';
-import { Github, Slack, Twitter } from 'grommet-icons';
+import { Github } from 'grommet-icons';
 
 
 export default () => (
